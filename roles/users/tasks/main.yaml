@@ -7,25 +7,20 @@
     create_home: true
 
 - name: Add SSH key for jasonj
-  ansible.builtin.authorized_key:
+  ansible.posix.authorized_key:
     user: jasonj
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
     state: present
 
-- name: Add sudoers file for jasonj, so he can sudo without password
+- name: Add sudoers file for jasonj, allow sudo without password
   ansible.builtin.copy:
     src: sudoer_jasonj
     dest: /etc/sudoers.d/jasonj
     owner: root
     group: root
-    mode: 440
+    mode: '0440'
 
 - name: Check if Oh My Zsh is installed for jasonj
   ansible.builtin.stat:
     path: /home/jasonj/.oh-my-zsh
-  register: omz_status
-
-- name: Install Oh My Zsh for jasonj
-  ansible.builtin.shell: yes | sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-  become_user: jasonj
-  when: omz_status.stat.exists == false
+  notify: install_omz

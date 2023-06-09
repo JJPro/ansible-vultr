@@ -1,5 +1,5 @@
 ---
-- name: Initial setup for the servers (Creates the ansible user)
+- name: Initial setup for the servers (Install upgrades, Create the ansible user)
   hosts: all
   become: true
   tasks:
@@ -26,13 +26,19 @@
     - name: Add SSH key for ansible
       ansible.posix.authorized_key:
         user: ansible
-        key: "{{ lookup('file', '~/.ssh/ansible_rsa.pub') }}"
+        key: "{{ lookup('file', '~/.ssh/ansible.pub') }}"
         state: present
 
-    - name: Add sudoers file for ansible, enabling him to sudo without password
+    - name: Add sudoers file for ansible, allowing it to sudo without password
       ansible.builtin.copy:
         src: sudoer_ansible
         dest: /etc/sudoers.d/ansible
         owner: root
         group: root
         mode: '0440'
+
+- name: Configure SSH
+  hosts: all
+  become: true
+  roles:
+    - ssh_config
