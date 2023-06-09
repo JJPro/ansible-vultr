@@ -1,3 +1,4 @@
-# [nodes]
-45.63.18.149 ansible_user=root 
-140.82.15.93 ansible_user=root
+[nodes]
+#45.63.18.149 ansible_user=root 
+#140.82.15.93 ansible_user=root
+192.168.10.136 ansible_user=jasonj
