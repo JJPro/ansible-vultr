@@ -1,16 +1,12 @@
 ---
-- name: Initial setups for VPS
+- name: Check and install package updates
   hosts: all
   become: true
   tasks:
-    - name: Install Packages
+    - name: Update repo cache
       ansible.builtin.apt:
-        name:
-          - zsh
-          - git
-          - curl
-        state: present
         update_cache: true
+      changed_when: false
 
 - name: Install Docker
   hosts: all
@@ -60,10 +56,10 @@
     - name: Add SSH key for jasonj
       ansible.builtin.authorized_key:
         user: jasonj
-        key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDITvPZPoipKNmOdBbbXO7gL7yYnlBHT805EWjk7mmaGhMde+UFw1kItUGUx2hCo6BAIcLp/yK+DyErSFwWlhSK51TYFAVVmMwPEhirMwQgvGshS10vGVXxeCevNbQAd65UGijM/JIdXqWDm8wsH8QGJbMNCDs9IGisbhjo7kSQYirYmcoxjV+oA/0QTaS9Jek7SRueWdQxjbcAbEVjt15MxpjeNr1I7F05/LpWAURxMFpbBBHVLfBEpG41mUbVqds4xXPSS5U6ygCkHZ45pIwRgRS1GrYaTClcsibKG97uUANPNq98GY8LcsSJibzm5rUh2KwjWTWPTs5jQq17LQlv jjpro default" # noqa
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
         state: present
 
-    - name: Add sudoers file for jasonj, so he can sudo without password 
+    - name: Add sudoers file for jasonj, so he can sudo without password
       ansible.builtin.copy:
         src: sudoer_jasonj
         dest: /etc/sudoers.d/jasonj
